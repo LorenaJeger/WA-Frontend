@@ -15,7 +15,7 @@ export default {
   },
   name: "newpost",
   methods: {
-    postImage() {
+    /* postImage() {
       this.imageData.generateBlob(blobData => {
         if (blobData != null) {
           // ako koristimo "/" u nazivu slike, Storage fino napravi direktorij.
@@ -54,7 +54,36 @@ export default {
         }
       }); // da... zatvaranje zagrada nakon ovoga noćna je mora!
     }
-  }
+   */
+  methods: {  
+    getImageBlob() {    // Advanced: kako omotati klasičnu callback funkciju u Promise    
+    return new Promise((resolve, reject) => {      
+      this.imageData.generateBlob(blobData => {        
+        if (blobData != null) {          
+          resolve(blobData)        
+          }       
+           else {         
+              reject("Error with getting image.")       
+               }     
+                })   
+                 })  
+                 },  
+                 async postImage() {   
+                    let blobData = await this.getImageBlob()    
+                    let imageName = this.userEmail + "/" + Date.now() + ".png";    
+                    let result = await storage.ref(imageName).put(blobData)   
+                    let url = await result.ref.getDownloadURL()    
+                    let docRef = await db.collection("posts").add({      
+                      email: this.userEmail,      
+                      posted_at: Date.now(),      
+                      url: url   
+                       })
+    this.imageData = null;   
+   this.$router.push({name: "posts"})  
+   }
+    }
+}
+
 };
 </script>
 
