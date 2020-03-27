@@ -1,62 +1,58 @@
 <template>
   <div v-if="store.authenticated">
-    <button @click="newImage()" type="Novi post" class="btn btn-primary ml-2">Post new image</button>
-    <div @click="gotoDetails(post)" :key="post.id" v-for="post in posts">
-      <InstagramCard :info="post"/>
+    <div @click="gotoDetails(card)" :key="card.id" v-for="card in cards">
+      <InstagramCard :info="card"/>
     </div>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
+import { Posts } from "@/services"
 import InstagramCard from "@/components/InstagramCard.vue";
 import store from "@/store.js";
 export default {
   data() {
-    //return store;
     return {
-      store: store,
-      posts: []
+      store,
+      cards: [],
     }
   },
-  name: "posts",
-  mounted() {
+  watch: {
+    "store.searchTerm": _.debounce(function(val) {this.fetchPosts(val)}, 500)
+  },
+  created() {
     this.fetchPosts()
   },
+  name: "posts",
   methods: {
-    fetchPosts() {
-      fetch(`http://localhost:3000/posts?_any=${this.store.searchTerm}`)
-        .then(response => {
-          return response.json()
-        })
-        .then(data => {
-          console.log("Podaci s backenda", data)
-          this.posts = data.map(doc => {
-            return {
-              id: doc.id,
-              url: doc.source,
-              email: doc.createdBy,
-              title:doc.title,
-              posted_at: Number(doc.postedAt)
-            }
-          })
-        })
-      },
+    async fetchPosts(term) {
+      term = term || store.searchTerm
+      this.cards = await Posts.getAll(term);
+
+      if (this.cards==false) {
+
+       this.cards = await Posts.getAll__(term)
+      } 
+      
+    },
+    
     gotoDetails(card) {
       this.$router.push({path: `post/${card.id}`})
-    },
-    newImage() {
-      this.$router.push({name: 'newpost'}).catch(err => console.log(err))
     }
+  },
+  async mounted() {
+  let r = await fetch ('http://localhost:3000/power?a=10&b=4')
+    let odgovori= await r.json()
+
+    let r2= await fetch(`http://localhost:3000/add?a= ${odgovori.rezlutat}&b=10`)
+    let finalni= await r2.json()
+
+    console.log(finalni)
   },
   components: {
     InstagramCard
   },
-  watch: {
-    "store.searchTerm": _.debounce(function() {
-      this.fetchPosts()
-    }, 500)     //milisekunde koje ce on cekati da korisnik nesto upise
-  }
 }
 </script>
 
