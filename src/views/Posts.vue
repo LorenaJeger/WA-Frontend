@@ -11,6 +11,7 @@
 import _ from 'lodash'
 import InstagramCard from "@/components/InstagramCard.vue";
 import store from "@/store.js";
+import { Posts } from "@/services";
 export default {
   data() {
     //return store;
@@ -24,24 +25,11 @@ export default {
     this.fetchPosts()
   },
   methods: {
-    fetchPosts() {
-      fetch(`http://localhost:3000/posts?_any=${this.store.searchTerm}`)
-        .then(response => {
-          return response.json()
-        })
-        .then(data => {
-          console.log("Podaci s backenda", data)
-          this.posts = data.map(doc => {
-            return {
-              id: doc.id,
-              url: doc.source,
-              email: doc.createdBy,
-              title:doc.title,
-              posted_at: Number(doc.postedAt)
-            }
-          })
-        })
-      },
+    async fetchPosts(term) {  //uzima neki pojam za pretragu
+      term = term || store.searchTerm  //ako pojam ne postoji uzima ga iz store-a i prosljeđuje u getAll()
+      
+      this.posts = await Posts.getAll(term) //getAll pričeka odgovor i spremi u postove(zamjena za fetch)
+    },
     gotoDetails(card) {
       this.$router.push({path: `post/${card.id}`})
     },

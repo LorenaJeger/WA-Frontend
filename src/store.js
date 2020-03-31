@@ -6,5 +6,6 @@ export default {
     searchTerm: '',
     postComment: '',
     imageData: null,
-    tipKorisnika: null
+    tipKorisnika: null,
+    postTitle:'',
 }
