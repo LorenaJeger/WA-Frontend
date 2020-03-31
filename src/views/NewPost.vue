@@ -8,7 +8,6 @@
 <script>
 import InstagramCard from "@/components/InstagramCard.vue";
 import store from "@/store.js";
-
 export default {
   data() {
     return store
@@ -22,7 +21,6 @@ export default {
           // Konkretno u ovom primjeru imat ćemo direktorij nazvan po mailu korisnika.
           // Slika će biti nazvana po trenutnom vremenu kako bi imali jedinstveni naziv slike.
           let imageName = this.userEmail + "/" + Date.now() + ".png";
-
           storage
             .ref(imageName)
             .put(blobData)
@@ -83,24 +81,19 @@ export default {
    }
     }
 }
-
 };
 </script>
 
 <style lang="scss">
-
 .card-body {
   padding: 0px;
 }
-
 img:hover {
   cursor: pointer;
 }
-
 .btn-post {
   width: 200px;
 }
-
 .croppa-container {
   border: 3px dashed gray;
   width: 400px;
