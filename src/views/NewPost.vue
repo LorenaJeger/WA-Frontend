@@ -8,21 +8,19 @@
 <script>
 import InstagramCard from "@/components/InstagramCard.vue";
 import store from "@/store.js";
-
 export default {
   data() {
     return store
   },
   name: "newpost",
   methods: {
-    postImage() {
+    /* postImage() {
       this.imageData.generateBlob(blobData => {
         if (blobData != null) {
           // ako koristimo "/" u nazivu slike, Storage fino napravi direktorij.
           // Konkretno u ovom primjeru imat ćemo direktorij nazvan po mailu korisnika.
           // Slika će biti nazvana po trenutnom vremenu kako bi imali jedinstveni naziv slike.
           let imageName = this.userEmail + "/" + Date.now() + ".png";
-
           storage
             .ref(imageName)
             .put(blobData)
@@ -54,24 +52,48 @@ export default {
         }
       }); // da... zatvaranje zagrada nakon ovoga noćna je mora!
     }
-  }
+   */
+  methods: {  
+    getImageBlob() {    // Advanced: kako omotati klasičnu callback funkciju u Promise    
+    return new Promise((resolve, reject) => {      
+      this.imageData.generateBlob(blobData => {        
+        if (blobData != null) {          
+          resolve(blobData)        
+          }       
+           else {         
+              reject("Error with getting image.")       
+               }     
+                })   
+                 })  
+                 },  
+                 async postImage() {   
+                    let blobData = await this.getImageBlob()    
+                    let imageName = this.userEmail + "/" + Date.now() + ".png";    
+                    let result = await storage.ref(imageName).put(blobData)   
+                    let url = await result.ref.getDownloadURL()    
+                    let docRef = await db.collection("posts").add({      
+                      email: this.userEmail,      
+                      posted_at: Date.now(),      
+                      url: url   
+                       })
+    this.imageData = null;   
+   this.$router.push({name: "posts"})  
+   }
+    }
+}
 };
 </script>
 
 <style lang="scss">
-
 .card-body {
   padding: 0px;
 }
-
 img:hover {
   cursor: pointer;
 }
-
 .btn-post {
   width: 200px;
 }
-
 .croppa-container {
   border: 3px dashed gray;
   width: 400px;

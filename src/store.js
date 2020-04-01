@@ -3,8 +3,10 @@ export default {
     userEmail: 'fake@email.com',
     newUrl: '',
     cards: [],
-    searchTerm: '',
+    searchTerm: " ",
     postComment: '',
     imageData: null,
-    tipKorisnika: null
+    tipKorisnika: null,
+    term: " ",
+    //postTitle:'',
 }
