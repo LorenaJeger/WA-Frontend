@@ -32,21 +32,30 @@ export default {
 
      let poljesearch= store.searchTerm.split(' ');
       
+      let term22 = term || store.searchTerm;
+      
+       
+     
+
      console.log("polje search: ", poljesearch);
       console.log("term:",term);
-
+        
      if(poljesearch[1]=='title'){
+   
        store.searchTerm= poljesearch[0];
-       term = term || store.searchTerm;
-       store.term=term;
+
+       let term22 = term || store.searchTerm;
+      console.log('term2',term22)
 
        this.cards = await Posts.getAll(term);  }
       
+
+
       if(poljesearch[1]=='createdBy') {
           store.searchTerm= poljesearch[0];
           term = term || store.searchTerm
-          store.term=term;
           
+
        this.cards = await Posts.getAll__(term);
       } }
       

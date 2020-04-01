@@ -2,7 +2,6 @@ import axios from 'axios'
 
 // instanca axios-a za potrebe Fipugram backenda 
 
-
 let Service = axios.create({    
     baseURL: 'http://localhost:3000/',    
     timeout: 1000
@@ -11,15 +10,12 @@ let Service = axios.create({
 
 })
 // naš objekt za sve pozive koji se dotiču `Post`ova 
-
-
 let Posts = {    
     add(post) {        
         return Service.post('/posts', post)    
-    }, 
-   
-
+    },    
     async getAll(searchTerm) {
+      console.log("pozvao sam se u getAll,searchTerm: ", searchTerm)
         let response = await Service.get(`/posts?title=${searchTerm}`); 
       // let data= response.data    data=data.map(doc =>)
         let data = response.data.map(doc => {
@@ -35,6 +31,7 @@ let Posts = {
         return data;
       },
       async getAll__(searchTerm) {
+        console.log("pozvao sam se u getAll__,searchTerm: ", searchTerm)
         let response = await Service.get(`/posts?createdBy=${searchTerm}`); 
       // let data= response.data    data=data.map(doc =>)
         let data = response.data.map(doc => {
