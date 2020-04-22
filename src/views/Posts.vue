@@ -1,22 +1,36 @@
 <template>
+<div>
+   <div v-if="post_dana" style="border: 5px solid blue">
+    <div @click="gotoDetails(post_dana)">
+      <InstagramCard :info="post_dana"/>
+      
+    </div>
+  </div>
+ 
   <div v-if="store.authenticated">
+    <p> </p>
     <button @click="newImage()" type="Novi post" class="btn btn-primary ml-2">Post new image</button>
     <div @click="gotoDetails(post)" :key="post.id" v-for="post in posts">
       <InstagramCard :info="post"/>
     </div>
   </div>
+</div>
+
+
 </template>
 
 <script>
 import _ from 'lodash'
 import InstagramCard from "@/components/InstagramCard.vue";
 import store from "@/store.js";
+import { Posts } from "@/services";
 export default {
   data() {
     //return store;
     return {
       store: store,
-      posts: []
+      posts: [],
+      post_dana: {}
     }
   },
   name: "posts",
@@ -24,24 +38,12 @@ export default {
     this.fetchPosts()
   },
   methods: {
-    fetchPosts() {
-      fetch(`http://localhost:3000/posts?_any=${this.store.searchTerm}`)
-        .then(response => {
-          return response.json()
-        })
-        .then(data => {
-          console.log("Podaci s backenda", data)
-          this.posts = data.map(doc => {
-            return {
-              id: doc.id,
-              url: doc.source,
-              email: doc.createdBy,
-              title:doc.title,
-              posted_at: Number(doc.postedAt)
-            }
-          })
-        })
-      },
+    async fetchPosts(term) {  //uzima neki pojam za pretragu
+      term = term || store.searchTerm  //ako pojam ne postoji uzima ga iz store-a i prosljeđuje u getAll()
+      
+      this.posts = await Posts.getAll(term) //getAll pričeka odgovor i spremi u postove(zamjena za fetch)
+      this.post_dana= await Posts.Random();
+    },
     gotoDetails(card) {
       this.$router.push({path: `post/${card.id}`})
     },
